@@ -1,4 +1,4 @@
-# Java-DB Toy Project : 🖐️Hi-Five! - Survey-based Matching Service
+# [Java-DB Toy Project] 🖐️Hi-Five! : Survey-based Matching Service
 <p>
 Do you need friends who have similar tastes with you?<br>
 Then, come to 🖐️Hi-Five!<br>
