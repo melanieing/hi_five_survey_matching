@@ -139,7 +139,7 @@ public class QuestionDAO {
 			conn = jdbcTemplate.getConnection();			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, questType);
-			rs = pstmt.executeQuery(); // 쿼리 전송!
+			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				QuestionVO tmp = new QuestionVO(
 						rs.getLong("QUEST_ID"), 

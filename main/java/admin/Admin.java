@@ -37,13 +37,13 @@ public class Admin {
 				sc = new Scanner(System.in);
 				// e.printStackTrace();
 			}
-			if (pwd == ADMIN_PWD) {
+			if (pwd == ADMIN_PWD) { // 비밀번호 일치 시 관리자 로그인 성공
 				System.out.println("관리자님 반갑습니다!^^");
 				break;
 			} else if (i < 3){
 				System.out.printf("비밀번호가 틀렸습니다! %d번의 기회가 남았습니다.\n>> ", 3-i);
 				i++;
-			} else {
+			} else { // 비밀번호 입력오류가 3회 초과 시 프로그램 종료
 				System.out.println("비밀번호가 맞지 않아 프로그램을 종료합니다.");
 				System.exit(0);
 			}
@@ -83,7 +83,81 @@ public class Admin {
 			}
 		}
 	}
-
+	
+	// 1. 회원정보 수정
+	public void updateMember() {
+		long targetMemId = 0;
+		String newMemName = "";
+		int newMemAge = 0;
+		String newMemGender = "";
+		try {
+			System.out.print("☞ 정보를 수정할 회원의 고유번호를 입력하세요 : ");
+			targetMemId = sc.nextLong();
+			System.out.print("☞ 새로운 별명, 나이, 성별을 입력하세요 : ");
+			newMemName = sc.next();
+			newMemAge = sc.nextInt();
+			newMemGender = sc.next();
+		} catch (Exception e) {
+			sc = new Scanner(System.in);
+			System.out.println("적절한 형식으로 입력하세요! (고유번호, 나이 : 숫자 / 별명 : 띄어쓰기 없는 문자열 / 성별 : 남자/여자");
+			// e.printStackTrace();
+		}
+		if (mdao.updateByMemId(targetMemId, newMemName, newMemAge, newMemGender)) {
+			// System.out.println("해당 회원정보가 수정되었습니다.");
+		} else {
+			System.out.println("회원정보 수정에 실패했습니다.");
+		}
+	}
+	
+	// 2. 회원정보 검색
+	public void searchMember() {
+		while (true) {
+			System.out.print("☞ 검색할 회원의 고유번호를 입력하세요 : ");
+			long targetMemId = 0;
+			try {
+				targetMemId = sc.nextLong();
+			} catch (Exception e) {
+				sc = new Scanner(System.in);
+				System.out.println("숫자를 입력하세요!");
+				continue;
+				// e.printStackTrace();
+			}
+			if (mdao.searchByMemId(targetMemId) != null) {
+				System.out.println(mdao.searchByMemId(targetMemId).toString());
+				break;
+			} else {
+				System.out.println("검색되는 정보가 없습니다!");
+				System.exit(0);
+			} 
+		}
+	}
+	
+	// 3. 회원정보 삭제
+	public void deleteMember() {
+		while (true) {
+			System.out.print("☞ 정보를 삭제할 회원의 고유번호를 입력하세요 : ");
+			long targetMemId = 0;
+			try {
+				targetMemId = sc.nextLong();
+			} catch (InputMismatchException e) {
+				sc = new Scanner(System.in);
+				System.out.println("숫자를 입력하세요!");
+				continue;
+				// e.printStackTrace();
+			} catch (Exception e) {
+				// e.printStackTrace();
+			} 
+			if (mdao.deleteByMemId(targetMemId)) {
+				System.out.println("해당 회원정보를 삭제했습니다.");
+				break;
+			} else {
+				System.out.println("존재하지 않는 회원고유번호입니다!");
+				System.exit(0);
+			}
+		}
+	}
+	
+	// 4. 설문응답결과 확인
 	public void checkSurveyResult() {
 		while (true) {
 			System.out.println("\n===========================================================");
@@ -119,31 +193,29 @@ public class Admin {
 		}
 	}
 
-	public void searchDataByQuestType() {
+	// 4-1. 회원고유번호로 설문데이터 검색
+	public void searchDataByMemId() {
 		while (true) {
-			System.out.println("☞ 데이터를 확인할 설문유형을 입력하세요(1~5) : ");
+			System.out.print("☞ 정보를 확인할 회원의 고유번호를 입력하세요 : ");
+			long targetMemId = 0;
 			try {
-				int questType = sc.nextInt();
-				int i = 1;
-				Iterator<QuestionVO> it = qdao.searchQuestByQuestType(questType).iterator();
-				while (it.hasNext()) {
-					System.out.println(i + "번째" + it.next().toString());
-					i++;
-					break;
-				}
-			} catch (InputMismatchException e) {
+				targetMemId = sc.nextLong();
+			} catch (Exception e) {
 				sc = new Scanner(System.in);
-				System.out.println("1~5 중에서 입력하세요!");
+				System.out.println("숫자를 입력하세요!");
 				continue;
 				// e.printStackTrace();
-			} catch (NullPointerException e) {
-				System.out.println("검색되는 정보가 없습니다!");
-				System.exit(0);
-				// e.printStackTrace();
+			}
+			System.out.printf("%s님의 설문응답 결과\n", mdao.searchByMemId(targetMemId).getMemName());
+			for (int questType = 1; questType <= 5; questType++) {
+				System.out.print(
+						"▶ " + questType + "번 질문에 대한 응답 : " + qdao.searchQuestAnswer(targetMemId, questType) + "\n");
 			} 
+			break;
 		}
 	}
-
+	
+	// 4-2.설문유형+설문응답으로 설문데이터 검색
 	public void searchDataByQuestTypeAndAnswer() {
 		int questType = 0;
 		int questAns = 0;
@@ -173,97 +245,40 @@ public class Admin {
 			// e.printStackTrace();
 		}
 	}
-
-	public void searchDataByMemId() {
+	
+	// 4-3. 설문유형으로 설문데이터 검색
+	public void searchDataByQuestType() {
 		while (true) {
-			System.out.print("☞ 정보를 확인할 회원의 고유번호를 입력하세요 : ");
-			long targetMemId = 0;
+			System.out.println("☞ 데이터를 확인할 설문유형을 입력하세요(1~5) : ");
 			try {
-				targetMemId = sc.nextLong();
-			} catch (Exception e) {
-				sc = new Scanner(System.in);
-				System.out.println("숫자를 입력하세요!");
-				continue;
-				// e.printStackTrace();
-			}
-			System.out.printf("%s님의 설문응답 결과\n", mdao.searchByMemId(targetMemId).getMemName());
-			for (int questType = 1; questType <= 5; questType++) {
-				System.out.print(
-						"▶ " + questType + "번 질문에 대한 응답 : " + qdao.searchQuestAnswer(targetMemId, questType) + "\n");
-			} 
-			break;
-		}
-	}
-
-	public void deleteMember() {
-		while (true) {
-			System.out.print("☞ 정보를 삭제할 회원의 고유번호를 입력하세요 : ");
-			long targetMemId = 0;
-			try {
-				targetMemId = sc.nextLong();
+				int questType = sc.nextInt();
+				int i = 1;
+				Iterator<QuestionVO> it = qdao.searchQuestByQuestType(questType).iterator();
+				while (it.hasNext()) {
+					System.out.println(i + "번째" + it.next().toString());
+					i++;
+					break;
+				}
 			} catch (InputMismatchException e) {
 				sc = new Scanner(System.in);
-				System.out.println("숫자를 입력하세요!");
+				System.out.println("1~5 중에서 입력하세요!");
 				continue;
 				// e.printStackTrace();
-			} catch (Exception e) {
-				// e.printStackTrace();
-			} 
-			if (mdao.deleteByMemId(targetMemId)) {
-				System.out.println("해당 회원정보를 삭제했습니다.");
-				break;
-			} else {
-				System.out.println("존재하지 않는 회원고유번호입니다!");
-				System.exit(0);
-			}
-		}
-	}
-
-	public void searchMember() {
-		while (true) {
-			System.out.print("☞ 검색할 회원의 고유번호를 입력하세요 : ");
-			long targetMemId = 0;
-			try {
-				targetMemId = sc.nextLong();
-			} catch (Exception e) {
-				sc = new Scanner(System.in);
-				System.out.println("숫자를 입력하세요!");
-				continue;
-				// e.printStackTrace();
-			}
-			if (mdao.searchByMemId(targetMemId) != null) {
-				System.out.println(mdao.searchByMemId(targetMemId).toString());
-				break;
-			} else {
+			} catch (NullPointerException e) {
 				System.out.println("검색되는 정보가 없습니다!");
 				System.exit(0);
+				// e.printStackTrace();
 			} 
 		}
-		
 	}
 
-	public void updateMember() {
-		long targetMemId = 0;
-		String newMemName = "";
-		int newMemAge = 0;
-		String newMemGender = "";
-		try {
-			System.out.print("☞ 정보를 수정할 회원의 고유번호를 입력하세요 : ");
-			targetMemId = sc.nextLong();
-			System.out.print("☞ 새로운 별명, 나이, 성별을 입력하세요 : ");
-			newMemName = sc.next();
-			newMemAge = sc.nextInt();
-			newMemGender = sc.next();
-		} catch (Exception e) {
-			sc = new Scanner(System.in);
-			System.out.println("적절한 형식으로 입력하세요! (고유번호, 나이 : 숫자 / 별명 : 띄어쓰기 없는 문자열 / 성별 : 남자/여자");
-			// e.printStackTrace();
-		}
-		if (mdao.updateByMemId(targetMemId, newMemName, newMemAge, newMemGender)) {
-			// System.out.println("해당 회원정보가 수정되었습니다.");
-		} else {
-			System.out.println("회원정보 수정에 실패했습니다.");
-		}
-	}
+
+	
+
+
+
+
+
+
 	
 }

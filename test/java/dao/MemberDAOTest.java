@@ -7,8 +7,13 @@ import org.junit.jupiter.api.Test;
 class MemberDAOTest {
 
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	void memberAssertions() {
+		assertAll();
+	}
+	
+	@Test
+	void exceptionTesting() {
+		
 	}
 
 }

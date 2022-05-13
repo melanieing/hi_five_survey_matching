@@ -7,8 +7,13 @@ import org.junit.jupiter.api.Test;
 class AdminTest {
 
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	void adminAssertions() {
+		assertAll();
+	}
+	
+	@Test
+	void exceptionTesting() {
+		
 	}
 
 }

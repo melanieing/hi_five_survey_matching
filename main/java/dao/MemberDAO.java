@@ -18,7 +18,8 @@ public class MemberDAO {
 		jdbcTemplate = JdbcTemplate.getInstance();
 	}
 	
-	// INSERT query
+	// MEMBER 테이블에 레코드 삽입
+	// INSERT INTO "MEMBER" VALUES ("SQ_MEMBER".NEXTVAL, ?, ?, ?)
 	public boolean insertMember(MemberVO vo) {
 		boolean flag = false;
 		Connection conn = null;
@@ -52,7 +53,8 @@ public class MemberDAO {
 		return flag; // INSERT 실패 시 그대로 false 반환
 	}
 		
-	// SELECT_ALL query 
+	// MEMBER 테이블의 전체 레코드 리스트로 받아오기
+	// SELECT "MEM_ID", "MEM_NAME", "MEM_AGE", "MEM_GENDER" FROM "MEMBER"
 	public List<MemberVO> selectMemAll() {
 		Connection conn = null;
 		PreparedStatement pstmt = null; 
@@ -64,7 +66,7 @@ public class MemberDAO {
 		try {
 			conn = jdbcTemplate.getConnection();			
 			pstmt = conn.prepareStatement(sql);
-			rs = pstmt.executeQuery(); // 쿼리 전송!
+			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				MemberVO tmp = new MemberVO(
 						rs.getLong("MEM_ID"), 
@@ -89,7 +91,8 @@ public class MemberDAO {
 		return (list.size() == 0) ? null : list;
 	}
 	
-	// SELECT_ONE query 
+	// MEMBER 테이블에서 특정 회원고유번호로 회원정보 받아오기
+	// SELECT "MEM_ID", "MEM_NAME", "MEM_AGE", "MEM_GENDER" FROM "MEMBER" WHERE "MEM_ID"=?
 	public MemberVO searchByMemId(long memId) {
 		Connection conn = null;
 		PreparedStatement pstmt = null; 
@@ -101,7 +104,7 @@ public class MemberDAO {
 			conn = jdbcTemplate.getConnection();			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setLong(1, memId);
-			rs = pstmt.executeQuery(); // 쿼리 전송!
+			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				memInfo = new MemberVO(rs.getLong("MEM_ID"), rs.getString("MEM_NAME"), 
 						rs.getInt("MEM_AGE"), rs.getString("MEM_GENDER"));
@@ -122,7 +125,8 @@ public class MemberDAO {
 		return (memInfo == null) ? null : memInfo;
 	}
 	
-	// SELECT_MEM_ID query 
+	// MEMBER 테이블에서 회원별명으로 회원고유번호를 받아오기
+	// SELECT "MEM_ID" FROM "MEMBER" WHERE "MEM_NAME"=?
 	public long searchMemId(String memName) {
 		Connection conn = null;
 		PreparedStatement pstmt = null; 
@@ -135,7 +139,7 @@ public class MemberDAO {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, memName);
 
-			rs = pstmt.executeQuery(); // 쿼리 전송!
+			rs = pstmt.executeQuery();
 			if (rs.next()) {
 				memId = rs.getLong("MEM_ID");
 			}
@@ -155,7 +159,8 @@ public class MemberDAO {
 		return memId;
 	}
 
-	// COUNT query 
+	// MEMBER 테이블에서 모든 레코드의 개수 반환
+	// SELECT COUNT(*) FROM "MEMBER"
 	public int countMemId() {
 		Connection conn = null;
 		Statement stmt = null;
@@ -186,7 +191,8 @@ public class MemberDAO {
 		return count;
 	}	
 	
-	// DELETE query
+	// MEMBER 테이블에서 회원고유번호와 일치하는 레코드 삭제
+	// DELETE FROM "MEMBER" WHERE "MEM_ID"=?
 	public boolean deleteByMemId(long memId) {
 		boolean flag = false;
 		
@@ -221,38 +227,39 @@ public class MemberDAO {
 	}
 
 	
-	// UPDATE query (NOT DONE)
-		public boolean updateByMemId(long targetMemId, String memName, int memAge, String memGender) {
-			boolean flag = false;
-			Connection conn = null;
-			PreparedStatement pstmt = null;
+	// MEMBER 테이블에서 특정 회원고유번호와 일치하는 레코드의 전체 정보 수정하기
+	// UPDATE "MEMBER" SET "MEM_NAME"=?, "MEM_AGE"=?, "MEM_GENDER"=? WHERE "MEM_ID=?
+	public boolean updateByMemId(long targetMemId, String memName, int memAge, String memGender) {
+		boolean flag = false;
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		
+		String sql = "UPDATE \"MEMBER\" SET \"MEM_NAME\"=?, \"MEM_AGE\"=?, \"MEM_GENDER\"=? WHERE \"MEM_ID\"=?";
 			
-			String sql = "UPDATE \"MEMBER\" SET \"MEM_NAME\"=?, \"MEM_AGE\"=?, \"MEM_GENDER\"=? WHERE \"MEM_ID\"=?";
-				
-			try {
-				conn = jdbcTemplate.getConnection();
-				
-				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1,memName);
-				pstmt.setInt(2, memAge);
-				pstmt.setString(3, memGender);
-				pstmt.setLong(4, targetMemId);
-				
-				int result = pstmt.executeUpdate();
-				System.out.println(result + "명의 정보가 수정되었습니다.");
-				flag = true; // UPDATE 성공 시 true 반환
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (pstmt != null) {
-					try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
-				}
-				if (conn != null) {
-					try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
-				}
+		try {
+			conn = jdbcTemplate.getConnection();
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,memName);
+			pstmt.setInt(2, memAge);
+			pstmt.setString(3, memGender);
+			pstmt.setLong(4, targetMemId);
+			
+			int result = pstmt.executeUpdate();
+			System.out.println(result + "명의 정보가 수정되었습니다.");
+			flag = true; // UPDATE 성공 시 true 반환
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (pstmt != null) {
+				try { pstmt.close(); } catch (SQLException e) { e.printStackTrace(); }
 			}
-			return flag; // UPDATE 실패 시 그대로 false 반환
+			if (conn != null) {
+				try { conn.close(); } catch (SQLException e) { e.printStackTrace(); }
+			}
 		}
+		return flag; // UPDATE 실패 시 그대로 false 반환
+	}
 	
 	
 }

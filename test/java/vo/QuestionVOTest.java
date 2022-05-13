@@ -7,8 +7,13 @@ import org.junit.jupiter.api.Test;
 class QuestionVOTest {
 
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	void questionAssertions() {
+		assertAll();
+	}
+	
+	@Test
+	void exceptionTesting() {
+		
 	}
 
 }

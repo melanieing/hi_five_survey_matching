@@ -60,7 +60,7 @@ public class Matching {
 				for (int ms : memberScores) {
 				}
 			} catch (ArrayIndexOutOfBoundsException e) {
-				e.printStackTrace();
+				// e.printStackTrace();
 			}
 			try {
 				memberScores[(int)targetMemId-1] = 0; // 본인(타겟회원고유번호)이 본인에게 매칭되면 안되므로 0으로 초기화
@@ -118,6 +118,26 @@ public class Matching {
 		return (matchingInfo.size() >= 3) ? matchingInfo : null;
 	}
 	
+	// MAIN에서 1:1 매칭 시 사용
+	public void matchOne(MemberDAO mdao, Matching manager, String memName) {
+		try {
+			long matchingMemId = 0L;
+			int matchingSimilarity = 0;
+			Set<Entry<Long, Integer>> entrySet = manager.getOneMatchingMemId(mdao.searchMemId(memName)).entrySet();
+			for (Entry<Long, Integer> entry : entrySet) {
+				matchingMemId = entry.getKey();
+				matchingSimilarity = entry.getValue();	
+			}
+			System.out.printf("%s 님입니다!>_< (예상친밀도 %d%%) (짝짝짝)\n", mdao.searchByMemId(matchingMemId).getMemName(), matchingSimilarity);
+		} catch (NullPointerException e) {
+			System.out.println("아직 매칭되는 회원이 없습니다!ㅠ_ㅠ");
+			System.out.println("더 많은 사람들이 Hi-Five!에 참여할 수 있도록 공유해주세요!>_<");
+			// e.printStackTrace();
+			System.exit(0); 
+		}
+	}
+	
+	// MAIN에서 그룹 매칭 시 사용
 	public void matchGroup(MemberDAO mdao, Matching manager, String memName) {
 		try {
 			long matchingMemId = 0L;
@@ -135,23 +155,6 @@ public class Matching {
 		} catch (NullPointerException e) { System.exit(0); }
 	}
 
-	public void matchOne(MemberDAO mdao, Matching manager, String memName) {
-		try {
-			long matchingMemId = 0L;
-			int matchingSimilarity = 0;
-			Set<Entry<Long, Integer>> entrySet = manager.getOneMatchingMemId(mdao.searchMemId(memName)).entrySet();
-			for (Entry<Long, Integer> entry : entrySet) {
-				matchingMemId = entry.getKey();
-				matchingSimilarity = entry.getValue();	
-			}
-			System.out.printf("%s 님입니다!>_< (예상친밀도 %d%%) (짝짝짝)\n", mdao.searchByMemId(matchingMemId).getMemName(), matchingSimilarity);
-		} catch (NullPointerException e) { 
-			System.out.println("matchone()error");
-			System.out.println("아직 매칭되는 회원이 없습니다!ㅠ_ㅠ");
-			System.out.println("더 많은 사람들이 Hi-Five!에 참여할 수 있도록 공유해주세요!>_<");
-			e.printStackTrace();
-			System.exit(0); 
-		}
-	}
+
 
 }

@@ -7,8 +7,12 @@ import org.junit.jupiter.api.Test;
 class SurveyTest {
 
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	void surveyAssertions() {
+		assertAll();
 	}
 
+	@Test
+	void exceptionTesting() {
+		
+	}
 }

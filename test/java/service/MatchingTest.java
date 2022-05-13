@@ -7,8 +7,18 @@ import org.junit.jupiter.api.Test;
 class MatchingTest {
 
 	@Test
-	void test() {
-		fail("Not yet implemented");
+	void matchingOneAssertions() {
+		assertAll();
+	}
+
+	@Test
+	void matchingGroupAssertions() {
+		assertAll();
+	}
+	
+	@Test
+	void exceptionTesting() {
+		
 	}
 
 }
