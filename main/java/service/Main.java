@@ -73,7 +73,7 @@ public class Main {
 				} catch (InputMismatchException | AnswerOutOfBoundException e) {
 					sc = new Scanner(System.in);
 					System.out.println("적절한 형식으로 입력하세요! (고유번호, 나이 : 숫자 / 별명 : 띄어쓰기 없는 문자열 / 성별 : 남자/여자");
-					e.printStackTrace();
+					// e.printStackTrace();
 					continue Login;
 				}
 			}
@@ -93,6 +93,7 @@ public class Main {
 				Service : while (true) {
 					try {
 						System.out.println("===========================================================");
+						System.out.println("아래 메뉴 중에서 선택하세요.");
 						System.out.println("1. 매칭하기 전, 다른 사람들은 어떻게 답했는지 볼까요?");
 						System.out.println("2. 관심없고~ 매칭부터 해주세요!");
 						System.out.print("3. 그냥 다음에 할게요!\n>> ");

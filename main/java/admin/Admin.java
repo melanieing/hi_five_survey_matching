@@ -127,7 +127,7 @@ public class Admin {
 				break;
 			} else {
 				System.out.println("검색되는 정보가 없습니다!");
-				System.exit(0);
+				break;
 			} 
 		}
 	}
@@ -172,12 +172,16 @@ public class Admin {
 				int ans2 = sc.nextInt();
 				if (ans2 == 1) {
 					searchDataByMemId();
+					continue;
 				} else if (ans2 == 2) {
 					searchDataByQuestTypeAndAnswer();
+					continue;
 				} else if (ans2 == 3) {
 					searchDataByQuestType();
+					continue;
 				} else if (ans2 == 4) {
 					sv.showSurveyResult(qdao);
+					continue;
 				} else if (ans2 == 5) {
 					System.out.println("다음에 또 이용해주세요!^^");
 					System.exit(0);
@@ -206,6 +210,10 @@ public class Admin {
 				continue;
 				// e.printStackTrace();
 			}
+			if (mdao.searchByMemId(targetMemId) == null) {
+				System.out.println("검색되는 정보가 없습니다!");
+				break;
+			}
 			System.out.printf("%s님의 설문응답 결과\n", mdao.searchByMemId(targetMemId).getMemName());
 			for (int questType = 1; questType <= 5; questType++) {
 				System.out.print(
@@ -231,13 +239,12 @@ public class Admin {
 		}
 		try {
 			Iterator<Long> it = qdao.searchMemId(questType, questAns).iterator();
-			System.out.printf("%d번 질문에 %d번을 선택한 회원 정보 목록\n", questType, questAns);
+			System.out.printf("---%d번 질문에 %d번을 선택한 회원 정보 목록---\n", questType, questAns);
 			int i = 1;
 			while (it.hasNext()) {
 				long tempId = (long)it.next();
 				System.out.println(i + "번째" + mdao.searchByMemId(tempId).toString() + "\n");
 				i++;
-				break;
 			}
 		} catch (NullPointerException e) {
 			System.out.println("검색되는 정보가 없습니다!");
@@ -257,8 +264,8 @@ public class Admin {
 				while (it.hasNext()) {
 					System.out.println(i + "번째" + it.next().toString());
 					i++;
-					break;
 				}
+				break;
 			} catch (InputMismatchException e) {
 				sc = new Scanner(System.in);
 				System.out.println("1~5 중에서 입력하세요!");
