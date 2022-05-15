@@ -13,8 +13,7 @@ After doing a small survey, you'll get a chance to talk with some friends you mi
 
 
 ## Notion Project Log
-https://exclusive-sphynx-956.notion.site/Hi-Five-309ff0b155d84e3296365261a678cedf
-
+https://0617.notion.site/Hi-Five-309ff0b155d84e3296365261a678cedf
 
 ![001](https://user-images.githubusercontent.com/91274798/168250387-3b89ef5b-74d0-4ba5-a384-e8291947a511.png)
 ![002](https://user-images.githubusercontent.com/91274798/168250463-a734d82b-52ff-4450-95dd-701ab38b9e03.png)
